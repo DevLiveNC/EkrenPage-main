@@ -39,7 +39,7 @@ export default function Navbar({ menuOpen, setMenuOpen }: NavbarProps) {
           {/* Logo */}
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
-              <span className="text-black font-bold text-xs" style={{ fontFamily: "Bebas Neue" }}>EC</span>
+              <span className="text-black font-bold text-xs" style={{ fontFamily: "Bebas Neue" }}>EF</span>
             </div>
             <span
               className="text-white text-xl tracking-widest font-bold"
