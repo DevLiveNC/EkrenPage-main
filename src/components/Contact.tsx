@@ -89,7 +89,7 @@ export default function Contact() {
             WhatsApp
           </a>
           <a
-            href="https://instagram.com/elitecoach"
+            href="https://instagram.com/the_ekrenn"
             className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-pink-500/10 border border-pink-500/30 text-pink-400 rounded-2xl font-bold text-sm active:scale-95 transition-transform"
             style={{ fontFamily: "Rajdhani" }}
           >
