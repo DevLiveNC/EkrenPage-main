@@ -59,7 +59,7 @@ export default function About() {
                   className="text-white text-2xl font-black tracking-wider leading-tight"
                   style={{ fontFamily: "Bebas Neue" }}
                 >
-                  AHMET KAYA
+                  YAŞAR KIRMIZIYÜZ
                 </h2>
                 <p className="text-amber-400 text-sm font-semibold" style={{ fontFamily: "Rajdhani" }}>
                   Elite Personal Trainer
