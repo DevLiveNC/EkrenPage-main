@@ -37,7 +37,7 @@ export default function Contact() {
           </p>
           <div className="flex gap-3 justify-center">
             <a
-              href="https://wa.me/905001234567"
+              href="https://wa.me/905488889905"
               className="px-6 py-3 bg-green-500/20 border border-green-500/30 text-green-400 rounded-2xl font-semibold text-sm"
               style={{ fontFamily: "Rajdhani" }}
             >
@@ -79,7 +79,7 @@ export default function Contact() {
         {/* Quick Contact Buttons */}
         <div className="flex gap-3 mb-6">
           <a
-            href="https://wa.me/905001234567"
+            href="https://wa.me/905488889905"
             className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-green-500/10 border border-green-500/30 text-green-400 rounded-2xl font-bold text-sm active:scale-95 transition-transform"
             style={{ fontFamily: "Rajdhani" }}
           >
