@@ -10,7 +10,7 @@ export default function Footer() {
         {/* Logo */}
         <div className="flex items-center gap-2 justify-center mb-6">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
-            <span className="text-black font-bold text-xs" style={{ fontFamily: "Bebas Neue" }}>EC</span>
+            <span className="text-black font-bold text-xs" style={{ fontFamily: "Bebas Neue" }}>EF</span>
           </div>
           <span
             className="text-white text-2xl tracking-widest font-bold"
@@ -100,7 +100,7 @@ export default function Footer() {
             © 2025 EkrenFit · Tüm hakları saklıdır.
           </p>
           <p className="text-zinc-800 text-[10px] mt-1" style={{ fontFamily: "Inter" }}>
-            Tasarlandı & Geliştirildi ❤️
+            Yaşar Kırmızıyüz Tasarladı - LiveDev
           </p>
         </div>
       </div>
