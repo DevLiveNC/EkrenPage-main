@@ -45,7 +45,7 @@ export default function Navbar({ menuOpen, setMenuOpen }: NavbarProps) {
               className="text-white text-xl tracking-widest font-bold"
               style={{ fontFamily: "Bebas Neue", letterSpacing: "0.15em" }}
             >
-              ELITE<span className="text-amber-400">COACH</span>
+              EKREN<span className="text-amber-400">FIT</span>
             </span>
           </div>
 
