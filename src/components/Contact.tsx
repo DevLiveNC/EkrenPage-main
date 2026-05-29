@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const CONSULTATION_EMAIL = "snkirmiziyuzyasar61@gmail.com";
+
 export default function Contact() {
   const [form, setForm] = useState({
     name: "",
@@ -9,13 +11,60 @@ export default function Contact() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
 
   const goals = ["Kilo Vermek", "Kas Kazanmak", "Fit Kalmak", "Sporcu Performansı"];
   const pkgs = ["STARTER", "PRO", "ELITE", "Bilmiyorum"];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const isFormComplete =
+    form.name.trim() !== "" &&
+    form.phone.trim() !== "" &&
+    form.goal !== "" &&
+    form.package !== "";
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setError("");
+
+    if (!isFormComplete) {
+      setError("Lütfen tüm zorunlu alanları doldurun (ad, telefon, hedef ve paket).");
+      return;
+    }
+
+    setSending(true);
+
+    try {
+      const response = await fetch(`https://formsubmit.co/ajax/${CONSULTATION_EMAIL}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          _subject: "EkrenFit - Yeni Ücretsiz Danışmanlık Talebi",
+          _template: "table",
+          _captcha: "false",
+          name: form.name.trim(),
+          phone: form.phone.trim(),
+          goal: form.goal,
+          package: form.package,
+          message: form.message.trim() || "Belirtilmedi",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error("Gönderim başarısız");
+      }
+
+      setSubmitted(true);
+    } catch {
+      setError("Mesaj gönderilemedi. Lütfen tekrar deneyin veya WhatsApp üzerinden ulaşın.");
+    } finally {
+      setSending(false);
+    }
   };
 
   if (submitted) {
@@ -144,7 +193,7 @@ export default function Contact() {
           {/* Goal */}
           <div>
             <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block" style={{ fontFamily: "Rajdhani" }}>
-              Hedefin
+              Hedefin *
             </label>
             <div className="grid grid-cols-2 gap-2">
               {goals.map((goal) => (
@@ -168,7 +217,7 @@ export default function Contact() {
           {/* Package */}
           <div>
             <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block" style={{ fontFamily: "Rajdhani" }}>
-              İlgilendiğin Paket
+              İlgilendiğin Paket *
             </label>
             <div className="grid grid-cols-4 gap-2">
               {pkgs.map((pkg) => (
@@ -204,13 +253,20 @@ export default function Contact() {
             />
           </div>
 
+          {error && (
+            <p className="text-red-400 text-sm text-center" style={{ fontFamily: "Inter" }}>
+              {error}
+            </p>
+          )}
+
           {/* Submit */}
           <button
             type="submit"
-            className="w-full py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-black font-black text-base rounded-2xl tracking-wider shadow-lg shadow-amber-500/20 active:scale-95 transition-transform mt-2"
+            disabled={sending || !isFormComplete}
+            className="w-full py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-black font-black text-base rounded-2xl tracking-wider shadow-lg shadow-amber-500/20 active:scale-95 transition-transform mt-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
             style={{ fontFamily: "Rajdhani" }}
           >
-            ÜCRETSİZ DANIŞMANLIK TALEP ET →
+            {sending ? "GÖNDERİLİYOR..." : "ÜCRETSİZ DANIŞMANLIK TALEP ET →"}
           </button>
 
           <p className="text-center text-zinc-600 text-xs" style={{ fontFamily: "Inter" }}>
