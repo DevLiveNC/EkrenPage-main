@@ -1,3 +1,5 @@
+import { navLinks } from "../constants/navLinks";
+
 export default function Footer() {
   const scrollTo = (href: string) => {
     const el = document.querySelector(href);
@@ -73,13 +75,7 @@ export default function Footer() {
 
         {/* Nav Links */}
         <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-8">
-          {[
-            { label: "Ana Sayfa", href: "#hero" },
-            { label: "Hakkımda", href: "#about" },
-            { label: "Paketler", href: "#packages" },
-            { label: "Dönüşümler", href: "#transformation" },
-            { label: "İletişim", href: "#contact" },
-          ].map((link, i) => (
+          {navLinks.map((link, i) => (
             <button
               key={i}
               onClick={() => scrollTo(link.href)}

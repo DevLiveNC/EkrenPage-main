@@ -1,18 +1,10 @@
 import { useEffect, useState } from "react";
+import { navLinks } from "../constants/navLinks";
 
 interface NavbarProps {
   menuOpen: boolean;
   setMenuOpen: (open: boolean) => void;
 }
-
-const navLinks = [
-  { label: "Ana Sayfa", href: "#hero" },
-  { label: "Hakkımda", href: "#about" },
-  { label: "Hikâyem", href: "#story" },
-  { label: "Paketcikler", href: "#packages" },
-  { label: "Dönüşümler", href: "#transformation" },
-  { label: "İletişim", href: "#contact" },
-];
 
 export default function Navbar({ menuOpen, setMenuOpen }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
