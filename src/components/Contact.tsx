@@ -75,8 +75,7 @@ export default function Contact() {
     });
 
     try {
-      const response = await fetch(`https://formsubmit.co/${FORMSUBMIT_ID}`, {
-        // const response = await fetch(`https://formsubmit.co/ajax/${FORMSUBMIT_ID}`, {
+      const response = await fetch(`https://formsubmit.co/ajax/${FORMSUBMIT_ID}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
