@@ -2,105 +2,139 @@ import { useState } from "react";
 
 const CONSULTATION_EMAIL = "snkirmiziyuzyasar61@gmail.com";
 
-const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID ?? "";
-const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID ?? "";
-const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY ?? "";
+type FormData = {
+  name: string;
+  phone: string;
+  goal: string;
+  package: string;
+  message: string;
+};
+
+const initialForm: FormData = {
+  name: "",
+  phone: "",
+  goal: "",
+  package: "",
+  message: "",
+};
 
 export default function Contact() {
-  const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    goal: "",
-    package: "",
-    message: "",
-  });
+  const [form, setForm] = useState<FormData>(initialForm);
+  const [submittedForm, setSubmittedForm] = useState<FormData | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
+  const [attempted, setAttempted] = useState(false);
 
   const goals = ["Kilo Vermek", "Kas Kazanmak", "Fit Kalmak", "Sporcu Performansı"];
   const pkgs = ["STARTER", "PRO", "ELITE", "Bilmiyorum"];
 
-  const isFormComplete =
-    form.name.trim() !== "" &&
-    form.phone.trim() !== "" &&
-    form.goal !== "" &&
-    form.package !== "";
+  const fields = [
+    { key: "name" as const, filled: form.name.trim() !== "" },
+    { key: "phone" as const, filled: form.phone.trim() !== "" },
+    { key: "goal" as const, filled: form.goal !== "" },
+    { key: "package" as const, filled: form.package !== "" },
+  ];
+
+  const isFormComplete = fields.every((f) => f.filled);
+  const progress = Math.round((fields.filter((f) => f.filled).length / fields.length) * 100);
+
+  const fieldError = (filled: boolean) =>
+    attempted && !filled ? "border-red-500/50 focus:border-red-500/50" : "border-zinc-800 focus:border-amber-400/50";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setAttempted(true);
     setError("");
 
     if (!isFormComplete) {
-      setError("Lütfen tüm zorunlu alanları doldurun (ad, telefon, hedef ve paket).");
-      return;
-    }
-
-    if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
-      setError("E-posta servisi henüz yapılandırılmadı. Lütfen WhatsApp üzerinden ulaşın.");
+      setError("Lütfen yıldızlı (*) tüm alanları doldurun.");
       return;
     }
 
     setSending(true);
 
     try {
-      const response = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+      const response = await fetch(`https://formsubmit.co/ajax/${CONSULTATION_EMAIL}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
         body: JSON.stringify({
-          service_id: EMAILJS_SERVICE_ID,
-          template_id: EMAILJS_TEMPLATE_ID,
-          user_id: EMAILJS_PUBLIC_KEY,
-          template_params: {
-            to_email: CONSULTATION_EMAIL,
-            subject: "EkrenFit - Yeni Ücretsiz Danışmanlık Talebi",
-            name: form.name.trim(),
-            phone: form.phone.trim(),
-            goal: form.goal,
-            package: form.package,
-            message: form.message.trim() || "Belirtilmedi",
-          },
+          _subject: "EkrenFit - Yeni Ücretsiz Danışmanlık Talebi",
+          _template: "table",
+          _captcha: "false",
+          "Ad Soyad": form.name.trim(),
+          Telefon: form.phone.trim(),
+          Hedef: form.goal,
+          Paket: form.package,
+          Mesaj: form.message.trim() || "Belirtilmedi",
         }),
       });
 
-      if (!response.ok) {
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
         throw new Error("Gönderim başarısız");
       }
 
+      setSubmittedForm({ ...form });
       setSubmitted(true);
     } catch {
-      setError("Mesaj gönderilemedi. Lütfen tekrar deneyin veya WhatsApp üzerinden ulaşın.");
+      setError("Gönderilemedi. Lütfen tekrar deneyin veya WhatsApp üzerinden ulaşın.");
     } finally {
       setSending(false);
     }
   };
 
-  if (submitted) {
+  if (submitted && submittedForm) {
     return (
       <section id="contact" className="relative py-20 bg-zinc-950 overflow-hidden">
-        <div className="max-w-md mx-auto px-6 text-center">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-4xl mx-auto mb-6 shadow-2xl shadow-amber-500/30">
-            ✓
-          </div>
-          <h2
-            className="text-4xl font-black text-white tracking-wider mb-3"
-            style={{ fontFamily: "Bebas Neue" }}
-          >
-            MESAJIN ALINDI!
-          </h2>
-          <p className="text-zinc-400 text-base mb-6" style={{ fontFamily: "Inter" }}>
-            En kısa sürede seninle iletişime geçeceğim.{" "}
-            <span className="text-amber-400">Dönüşüm yolculuğuna başlamaya hazır ol! 💪</span>
-          </p>
-          <div className="flex gap-3 justify-center">
-            <a
-              href="https://wa.me/905488889905"
-              className="px-6 py-3 bg-green-500/20 border border-green-500/30 text-green-400 rounded-2xl font-semibold text-sm"
-              style={{ fontFamily: "Rajdhani" }}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl" />
+
+        <div className="max-w-md mx-auto px-6 relative">
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-4xl mx-auto mb-6 shadow-2xl shadow-amber-500/30 animate-[pulse_2s_ease-in-out_1]">
+              ✓
+            </div>
+            <h2
+              className="text-4xl font-black text-white tracking-wider mb-3"
+              style={{ fontFamily: "Bebas Neue" }}
             >
-              WhatsApp ile Ulaş
-            </a>
+              TALEBİN ALINDI!
+            </h2>
+            <p className="text-zinc-400 text-base" style={{ fontFamily: "Inter" }}>
+              Bilgilerin bize ulaştı. En kısa sürede seninle iletişime geçeceğiz.{" "}
+              <span className="text-amber-400">Dönüşüm yolculuğuna hazır ol!</span>
+            </p>
           </div>
+
+          <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 mb-6 space-y-3">
+            <p className="text-amber-400 text-xs uppercase tracking-widest font-semibold mb-4" style={{ fontFamily: "Rajdhani" }}>
+              Gönderilen Bilgiler
+            </p>
+            {[
+              { label: "Ad Soyad", value: submittedForm.name },
+              { label: "Telefon", value: submittedForm.phone },
+              { label: "Hedef", value: submittedForm.goal },
+              { label: "Paket", value: submittedForm.package },
+              { label: "Mesaj", value: submittedForm.message || "—" },
+            ].map((row) => (
+              <div key={row.label} className="flex justify-between gap-4 text-sm border-b border-zinc-800/60 pb-2 last:border-0 last:pb-0">
+                <span className="text-zinc-500 shrink-0" style={{ fontFamily: "Rajdhani" }}>{row.label}</span>
+                <span className="text-white text-right font-medium" style={{ fontFamily: "Inter" }}>{row.value}</span>
+              </div>
+            ))}
+          </div>
+
+          <a
+            href="https://wa.me/905488889905"
+            className="flex items-center justify-center gap-2 w-full py-3.5 bg-green-500/10 border border-green-500/30 text-green-400 rounded-2xl font-bold text-sm active:scale-95 transition-transform"
+            style={{ fontFamily: "Rajdhani" }}
+          >
+            Acil mi? WhatsApp ile Ulaş
+          </a>
         </div>
       </section>
     );
@@ -111,38 +145,41 @@ export default function Contact() {
       <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl" />
 
       <div className="max-w-md mx-auto px-6">
-        {/* Section Label */}
         <div className="flex items-center gap-3 mb-3">
           <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-amber-400/50" />
-          <span
-            className="text-amber-400 text-xs tracking-[0.3em] uppercase font-semibold"
-            style={{ fontFamily: "Rajdhani" }}
-          >
+          <span className="text-amber-400 text-xs tracking-[0.3em] uppercase font-semibold" style={{ fontFamily: "Rajdhani" }}>
             İletişim
           </span>
           <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-amber-400/50" />
         </div>
 
-        <h2
-          className="text-4xl font-black text-white tracking-wider text-center mb-2"
-          style={{ fontFamily: "Bebas Neue" }}
-        >
+        <h2 className="text-4xl font-black text-white tracking-wider text-center mb-2" style={{ fontFamily: "Bebas Neue" }}>
           ÜCRETSİZ DANIŞMANLIK
         </h2>
-        <p className="text-zinc-500 text-sm text-center mb-8" style={{ fontFamily: "Inter" }}>
-          İlk danışmanlık görüşmesi tamamen ücretsiz!
+        <p className="text-zinc-500 text-sm text-center mb-6" style={{ fontFamily: "Inter" }}>
+          Formu doldur, sana en kısa sürede dönüş yapalım.
         </p>
 
-        {/* Quick Contact Buttons */}
+        {/* Progress */}
+        <div className="mb-6">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-zinc-500 text-xs" style={{ fontFamily: "Rajdhani" }}>Form tamamlanma</span>
+            <span className="text-amber-400 text-xs font-bold" style={{ fontFamily: "Rajdhani" }}>%{progress}</span>
+          </div>
+          <div className="h-1.5 bg-zinc-900 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+
         <div className="flex gap-3 mb-6">
           <a
             href="https://wa.me/905488889905"
             className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-green-500/10 border border-green-500/30 text-green-400 rounded-2xl font-bold text-sm active:scale-95 transition-transform"
             style={{ fontFamily: "Rajdhani" }}
           >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-            </svg>
             WhatsApp
           </a>
           <a
@@ -150,60 +187,50 @@ export default function Contact() {
             className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-pink-500/10 border border-pink-500/30 text-pink-400 rounded-2xl font-bold text-sm active:scale-95 transition-transform"
             style={{ fontFamily: "Rajdhani" }}
           >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
-            </svg>
             Instagram
           </a>
         </div>
 
-        {/* Divider */}
         <div className="flex items-center gap-3 mb-6">
           <div className="h-[1px] flex-1 bg-zinc-800" />
           <span className="text-zinc-600 text-xs">veya form doldur</span>
           <div className="h-[1px] flex-1 bg-zinc-800" />
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name */}
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           <div>
             <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block" style={{ fontFamily: "Rajdhani" }}>
-              Adın *
+              Ad Soyad *
             </label>
             <input
               type="text"
-              required
               placeholder="Adın ve soyadın"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full bg-zinc-900 border border-zinc-800 text-white placeholder-zinc-600 rounded-2xl px-4 py-3.5 text-sm outline-none focus:border-amber-400/50 transition-colors"
+              className={`w-full bg-zinc-900 border text-white placeholder-zinc-600 rounded-2xl px-4 py-3.5 text-sm outline-none transition-colors ${fieldError(form.name.trim() !== "")}`}
               style={{ fontFamily: "Inter" }}
             />
           </div>
 
-          {/* Phone */}
           <div>
             <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block" style={{ fontFamily: "Rajdhani" }}>
               Telefon *
             </label>
             <input
               type="tel"
-              required
               placeholder="05XX XXX XX XX"
               value={form.phone}
               onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              className="w-full bg-zinc-900 border border-zinc-800 text-white placeholder-zinc-600 rounded-2xl px-4 py-3.5 text-sm outline-none focus:border-amber-400/50 transition-colors"
+              className={`w-full bg-zinc-900 border text-white placeholder-zinc-600 rounded-2xl px-4 py-3.5 text-sm outline-none transition-colors ${fieldError(form.phone.trim() !== "")}`}
               style={{ fontFamily: "Inter" }}
             />
           </div>
 
-          {/* Goal */}
           <div>
             <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block" style={{ fontFamily: "Rajdhani" }}>
               Hedefin *
             </label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className={`grid grid-cols-2 gap-2 rounded-2xl p-1 transition-colors ${attempted && !form.goal ? "ring-1 ring-red-500/40" : ""}`}>
               {goals.map((goal) => (
                 <button
                   key={goal}
@@ -211,8 +238,8 @@ export default function Contact() {
                   onClick={() => setForm({ ...form, goal })}
                   className={`py-2.5 px-3 rounded-xl text-xs font-semibold border transition-all ${
                     form.goal === goal
-                      ? "bg-amber-400/20 border-amber-400 text-amber-400"
-                      : "bg-zinc-900 border-zinc-800 text-zinc-500"
+                      ? "bg-amber-400/20 border-amber-400 text-amber-400 scale-[1.02]"
+                      : "bg-zinc-900 border-zinc-800 text-zinc-500 hover:border-zinc-700"
                   }`}
                   style={{ fontFamily: "Rajdhani" }}
                 >
@@ -222,12 +249,11 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* Package */}
           <div>
             <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block" style={{ fontFamily: "Rajdhani" }}>
               İlgilendiğin Paket *
             </label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className={`grid grid-cols-4 gap-2 rounded-2xl p-1 transition-colors ${attempted && !form.package ? "ring-1 ring-red-500/40" : ""}`}>
               {pkgs.map((pkg) => (
                 <button
                   key={pkg}
@@ -235,8 +261,8 @@ export default function Contact() {
                   onClick={() => setForm({ ...form, package: pkg })}
                   className={`py-2.5 rounded-xl text-xs font-bold border transition-all ${
                     form.package === pkg
-                      ? "bg-amber-400/20 border-amber-400 text-amber-400"
-                      : "bg-zinc-900 border-zinc-800 text-zinc-500"
+                      ? "bg-amber-400/20 border-amber-400 text-amber-400 scale-[1.02]"
+                      : "bg-zinc-900 border-zinc-800 text-zinc-500 hover:border-zinc-700"
                   }`}
                   style={{ fontFamily: "Rajdhani" }}
                 >
@@ -246,10 +272,9 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* Message */}
           <div>
             <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block" style={{ fontFamily: "Rajdhani" }}>
-              Mesajın (Opsiyonel)
+              Mesajın <span className="text-zinc-600 normal-case">(opsiyonel)</span>
             </label>
             <textarea
               rows={3}
@@ -262,23 +287,30 @@ export default function Contact() {
           </div>
 
           {error && (
-            <p className="text-red-400 text-sm text-center" style={{ fontFamily: "Inter" }}>
-              {error}
-            </p>
+            <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/25 rounded-2xl px-4 py-3">
+              <span className="text-red-400 text-lg leading-none mt-0.5">!</span>
+              <p className="text-red-400 text-sm" style={{ fontFamily: "Inter" }}>{error}</p>
+            </div>
           )}
 
-          {/* Submit */}
           <button
             type="submit"
-            disabled={sending || !isFormComplete}
-            className="w-full py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-black font-black text-base rounded-2xl tracking-wider shadow-lg shadow-amber-500/20 active:scale-95 transition-transform mt-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
+            disabled={sending}
+            className="w-full py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-black font-black text-base rounded-2xl tracking-wider shadow-lg shadow-amber-500/20 active:scale-95 transition-all mt-2 disabled:opacity-70 disabled:cursor-wait disabled:active:scale-100 flex items-center justify-center gap-2"
             style={{ fontFamily: "Rajdhani" }}
           >
-            {sending ? "GÖNDERİLİYOR..." : "ÜCRETSİZ DANIŞMANLIK TALEP ET →"}
+            {sending ? (
+              <>
+                <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                GÖNDERİLİYOR...
+              </>
+            ) : (
+              "ÜCRETSİZ DANIŞMANLIK TALEP ET →"
+            )}
           </button>
 
           <p className="text-center text-zinc-600 text-xs" style={{ fontFamily: "Inter" }}>
-            🔒 Bilgilerin güvende. Spam gönderilmez.
+            Bilgilerin yalnızca danışmanlık için kullanılır.
           </p>
         </form>
       </div>
