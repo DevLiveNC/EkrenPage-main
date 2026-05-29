@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const CONSULTATION_EMAIL = "snkirmiziyuzyasar61@gmail.com";
+const FORMSUBMIT_ID = "870a4418ace55e592464d200189d0c88";
 
 type FormData = {
   name: string;
@@ -55,7 +55,7 @@ export default function Contact() {
     setSending(true);
 
     try {
-      const response = await fetch(`https://formsubmit.co/ajax/${CONSULTATION_EMAIL}`, {
+      const response = await fetch(`https://formsubmit.co/ajax/${FORMSUBMIT_ID}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
