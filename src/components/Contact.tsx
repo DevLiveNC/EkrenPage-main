@@ -1,6 +1,7 @@
 import { useState } from "react";
 
-const FORMSUBMIT_ID = "870a4418ace55e592464d200189d0c88";
+// const FORMSUBMIT_ID = "870a4418ace55e592464d200189d0c88";
+const FORMSUBMIT_ID = "snkirmiziyuzyasar61@gmail.com";
 
 type FormData = {
   name: string;
@@ -54,23 +55,34 @@ export default function Contact() {
 
     setSending(true);
 
+    const details = [
+      `Ad Soyad: ${form.name.trim()}`,
+      `Telefon: ${form.phone.trim()}`,
+      `Hedef: ${form.goal}`,
+      `Paket: ${form.package}`,
+      `Mesaj: ${form.message.trim() || "Belirtilmedi"}`,
+    ].join("\n");
+
+    const body = new URLSearchParams({
+      _subject: "EkrenFit - Yeni Ücretsiz Danışmanlık Talebi",
+      _template: "table",
+      _captcha: "false",
+      name: form.name.trim(),
+      phone: form.phone.trim(),
+      goal: form.goal,
+      package: form.package,
+      message: details,
+    });
+
     try {
-      const response = await fetch(`https://formsubmit.co/ajax/${FORMSUBMIT_ID}`, {
+      const response = await fetch(`https://formsubmit.co/${FORMSUBMIT_ID}`, {
+        // const response = await fetch(`https://formsubmit.co/ajax/${FORMSUBMIT_ID}`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
           Accept: "application/json",
         },
-        body: JSON.stringify({
-          _subject: "EkrenFit - Yeni Ücretsiz Danışmanlık Talebi",
-          _template: "table",
-          _captcha: "false",
-          "Ad Soyad": form.name.trim(),
-          Telefon: form.phone.trim(),
-          Hedef: form.goal,
-          Paket: form.package,
-          Mesaj: form.message.trim() || "Belirtilmedi",
-        }),
+        body: body.toString(),
       });
 
       const data = await response.json();
