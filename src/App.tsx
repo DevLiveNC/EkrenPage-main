@@ -2,6 +2,7 @@ import { useState } from "react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import About from "./components/About";
+import Story from "./components/Story";
 import Packages from "./components/Packages";
 import Testimonials from "./components/Testimonials";
 import Transformation from "./components/Transformation";
@@ -16,6 +17,7 @@ export default function App() {
       <Navbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
       <Hero />
       <About />
+      <Story />
       <Packages />
       <Transformation />
       <Testimonials />

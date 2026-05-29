@@ -8,6 +8,7 @@ interface NavbarProps {
 const navLinks = [
   { label: "Ana Sayfa", href: "#hero" },
   { label: "Hakkımda", href: "#about" },
+  { label: "Hikâyem", href: "#story" },
   { label: "Paketcikler", href: "#packages" },
   { label: "Dönüşümler", href: "#transformation" },
   { label: "İletişim", href: "#contact" },

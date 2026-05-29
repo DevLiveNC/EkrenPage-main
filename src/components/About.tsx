@@ -52,17 +52,17 @@ export default function About() {
           <div className="bg-gradient-to-br from-zinc-900 to-black p-6">
             <div className="flex items-start gap-4 mb-5">
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-2xl font-black text-black shadow-lg shadow-amber-500/30 flex-shrink-0" style={{ fontFamily: "Bebas Neue" }}>
-                AK
+                AE
               </div>
               <div>
                 <h2
                   className="text-white text-2xl font-black tracking-wider leading-tight"
                   style={{ fontFamily: "Bebas Neue" }}
                 >
-                  YAŞAR KIRMIZIYÜZ
+                  ALİ EKREN
                 </h2>
                 <p className="text-amber-400 text-sm font-semibold" style={{ fontFamily: "Rajdhani" }}>
-                  Elite Personal Trainer
+                  Fitness Koçu & Yarışmacı
                 </p>
                 <div className="flex gap-1 mt-1">
                   {[...Array(5)].map((_, i) => (
@@ -74,8 +74,19 @@ export default function About() {
             </div>
 
             <p className="text-zinc-400 text-sm leading-relaxed mb-5" style={{ fontFamily: "Inter" }}>
-              8 yıllık deneyimim boyunca <span className="text-white font-semibold">500'den fazla kişiye</span> vücutlarını ve hayatlarını dönüştürme yolculuğunda eşlik ettim. Her bireyin farklı olduğuna inanıyor, tamamen kişiselleştirilmiş programlar hazırlıyorum.
+              2018'den bu yana kendi dönüşüm yolculuğumdan edindiğim deneyimle danışanlarıma rehberlik ediyorum. Her bireyin farklı olduğuna inanıyor, tamamen kişiselleştirilmiş programlar hazırlıyorum.
             </p>
+
+            <button
+              onClick={() => {
+                const el = document.querySelector("#story");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="w-full mb-5 py-3 border border-amber-400/30 text-amber-400 font-bold text-sm rounded-2xl tracking-wider hover:bg-amber-400/5 active:scale-[0.98] transition-all"
+              style={{ fontFamily: "Rajdhani" }}
+            >
+              HİKÂYEMİ OKU →
+            </button>
 
             {/* Certs */}
             <div className="flex flex-wrap gap-2">
