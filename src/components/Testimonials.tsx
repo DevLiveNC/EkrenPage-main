@@ -2,37 +2,37 @@ import { useState } from "react";
 
 const testimonials = [
   {
-    name: "Zeynep M.",
-    role: "Öğretmen, 34 yaş",
+    name: "Yaşar K.",
+    role: "Yazılım, 21 Yaşında",
     stars: 5,
-    text: "Daha önce birçok diyetisyen ve PT ile çalıştım ama Ahmet ile çalışmak tamamen farklıydı. Gerçekten kişiselleştirilmiş bir program ve sürekli motivasyon. 3 ayda hayallerimin vücuduna kavuştum!",
-    initials: "ZM",
-    packageColor: "bg-amber-400",
+    text: "Ali ile tanışmadan önce fazla yağlarımı yok etmek bana imkansız gibi geliyordu, Ali sayesinde bu algıyı yendim ve hayalimi gerçekleştirebildim. Özgüven düşüklüğü yaşayan ve fiziksel bir gelişim kaydetmek isteyen herkese tavsiyemdir...!",
+    initials: "YK",
+    packageColor: "bg-sky-700",
   },
-  {
-    name: "Burak S.",
-    role: "Yazılımcı, 29 yaş",
-    stars: 5,
-    text: "Masa başı çalışırken aldığım kilolardan kurtulmak istiyordum. Online program sayesinde evden çalışırken bile düzenimi koruyabildim. Harika bir deneyim!",
-    initials: "BS",
-    packageColor: "bg-orange-500",
-  },
-  {
-    name: "Ayşe D.",
-    role: "Ev Hanımı, 41 yaş",
-    stars: 5,
-    text: "40 yaşımda başlayabileceğimden şüpheliydim. Ama Ahmet bey bana özel programıyla her şeyin mümkün olduğunu gösterdi. İnanılmaz derecede sabırlı ve anlayışlı.",
-    initials: "AD",
-    packageColor: "bg-amber-600",
-  },
-  {
-    name: "Emre K.",
-    role: "Sporcu, 26 yaş",
-    stars: 5,
-    text: "Sadece kilo vermek değil, kas kütlemi artırmak istedim. Elite paket tam da ihtiyacım olan buydu. 6 ayda vücudum tamamen değişti, rekabetçi sporlarda da fark yarattı.",
-    initials: "EK",
-    packageColor: "bg-yellow-500",
-  },
+  // {
+  //   name: "Burak S.",
+  //   role: "Yazılımcı, 29 yaş",
+  //   stars: 5,
+  //   text: "Masa başı çalışırken aldığım kilolardan kurtulmak istiyordum. Online program sayesinde evden çalışırken bile düzenimi koruyabildim. Harika bir deneyim!",
+  //   initials: "BS",
+  //   packageColor: "bg-orange-500",
+  // },
+  // {
+  //   name: "Ayşe D.",
+  //   role: "Ev Hanımı, 41 yaş",
+  //   stars: 5,
+  //   text: "40 yaşımda başlayabileceğimden şüpheliydim. Ama Ahmet bey bana özel programıyla her şeyin mümkün olduğunu gösterdi. İnanılmaz derecede sabırlı ve anlayışlı.",
+  //   initials: "AD",
+  //   packageColor: "bg-amber-600",
+  // },
+  // {
+  //   name: "Emre K.",
+  //   role: "Sporcu, 26 yaş",
+  //   stars: 5,
+  //   text: "Sadece kilo vermek değil, kas kütlemi artırmak istedim. Elite paket tam da ihtiyacım olan buydu. 6 ayda vücudum tamamen değişti, rekabetçi sporlarda da fark yarattı.",
+  //   initials: "EK",
+  //   packageColor: "bg-yellow-500",
+  // },
 ];
 
 export default function Testimonials() {
